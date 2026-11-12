@@ -267,10 +267,85 @@ def render_dataset(frames: dict[str, pd.DataFrame], ticker: str) -> None:
         "**Close:** cierre · **Volume:** volumen negociado. "
         "Los ajustes corporativos deben interpretarse conforme a la fuente."
     )
-    st.subheader(f"Observaciones OHLCV · {ticker}")
-    st.dataframe(frames[ticker].tail(40), use_container_width=True)
-    st.caption("Open / High / Low / Close expresados en USD por acción; "
-               "Volume en acciones negociadas. Se respeta el calendario de sesiones bursátiles.")
+    st.subheader("Explorador completo del dataset")
+    st.caption(
+        "Explora el histórico íntegro sin limitarlo a los 40 registros más recientes. "
+        "Puedes elegir una empresa o las cinco, filtrar por fechas, ordenar y descargar "
+        "las filas mostradas. Los filtros no modifican los snapshots originales."
+    )
+    scope = st.selectbox(
+        "Empresas a explorar",
+        ("Todas las empresas", *SYMBOLS),
+        index=1 + SYMBOLS.index(ticker),
+        format_func=lambda item: (
+            "Todas las empresas (5 acciones)"
+            if item == "Todas las empresas"
+            else f"{item} · {ASSETS[item].company}"
+        ),
+        key="dataset_explorer_scope",
+    )
+    selected_symbols = SYMBOLS if scope == "Todas las empresas" else (scope,)
+    min_date = min(frames[sym].index.min().date() for sym in selected_symbols)
+    max_date = max(frames[sym].index.max().date() for sym in selected_symbols)
+    d1, d2 = st.columns(2)
+    with d1:
+        start_date = st.date_input(
+            "Desde",
+            value=min_date,
+            min_value=min_date,
+            max_value=max_date,
+            key=f"dataset_start_{scope}",
+        )
+    with d2:
+        end_date = st.date_input(
+            "Hasta",
+            value=max_date,
+            min_value=min_date,
+            max_value=max_date,
+            key=f"dataset_end_{scope}",
+        )
+    if start_date > end_date:
+        st.error("La fecha inicial debe ser anterior o igual a la fecha final.")
+    else:
+        selected_frames = []
+        for sym in selected_symbols:
+            # Los índices están validados durante la carga de los snapshots.
+            data = frames[sym].loc[
+                (frames[sym].index.date >= start_date)
+                & (frames[sym].index.date <= end_date)
+            ].copy()
+            data.insert(0, "Ticker", sym)
+            selected_frames.append(data.reset_index())
+        explored = pd.concat(selected_frames, ignore_index=True)
+        explored = explored.sort_values(["Date", "Ticker"]).reset_index(drop=True)
+        a, b, c = st.columns(3)
+        a.metric("Registros visibles", f"{len(explored):,}")
+        b.metric("Registros del período completo", f"{sum(len(frames[sym]) for sym in selected_symbols):,}")
+        c.metric("Empresas seleccionadas", len(selected_symbols))
+        if explored.empty:
+            st.warning("No hay observaciones en el intervalo elegido.")
+        else:
+            st.dataframe(
+                explored,
+                use_container_width=True,
+                height=510,
+                hide_index=True,
+            )
+            st.download_button(
+                "Descargar registros visibles (CSV)",
+                data=explored.to_csv(index=False, date_format="%Y-%m-%d").encode("utf-8-sig"),
+                file_name=(
+                    f"TEMPUS_EXPLORATIO_{scope.replace(' ', '_')}_"
+                    f"{start_date:%Y%m%d}_{end_date:%Y%m%d}.csv"
+                ),
+                mime="text/csv",
+                key="dataset_download_filtered",
+            )
+        st.caption(
+            "Open, High, Low y Close: USD por acción, según ajuste de la fuente. "
+            "Volume: acciones negociadas. Las columnas adicionales originales se conservan. "
+            "La tabla admite desplazamiento, ordenación y búsqueda desde sus controles."
+        )
     st.download_button("Descargar conjunto validado y manifiesto (ZIP)",
                        export_bundle(frames), "tempus_exploratio_proto_datos.zip",
                        mime="application/zip", key="zip-dataset")
