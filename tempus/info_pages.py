@@ -124,47 +124,93 @@ de inteligencia artificial se estudiarán en profundidad en
 
     elif page == "Ayuda":
         st.header("Ayuda · TEMPUS EXPLORATIO PROTO")
-        st.caption("Guía práctica de uso y solución de incidencias")
-        st.subheader("Recorrido recomendado")
+        st.caption("Navegación por dos áreas y guía de uso de la Práctica 1")
+        st.subheader("1. Seleccionar un área")
         st.markdown("""
-1. En el menú lateral, selecciona una de las empresas: **JNJ, MSFT, JPM, WMT o XOM**.
-2. En **Análisis financiero → Serie individual**, selecciona apertura, máximo,
-   mínimo, cierre o volumen y observa la evolución cronológica.
-3. En **Cinco series**, verifica la gráfica y la descripción de cada empresa.
-4. En **Comparación**, consulta las series base 100 y los estadísticos.
-5. En **Calidad y resultados**, revisa OHLCV y las tres condiciones temporales, descarga los
-   insumos para Predictio o genera el borrador PDF de la Práctica 1.
-6. En **Dataset**, verifica fechas, cobertura, procedencia, tabla OHLCV y sesiones XNYS faltantes.
-7. En **Fundamentos**, consulta las definiciones; en **Trivia** realiza la autoevaluación.
+En la barra lateral, el bloque **SECCIONES** permite elegir entre dos áreas:
+
+- **Análisis financiero:** muestra el selector **Serie financiera** para elegir
+  JNJ, MSFT, JPM, WMT o XOM.
+- **Información del proyecto:** muestra las siete páginas **Acerca de, Dataset,
+  Fundamentos, Trivia, Ayuda, Institucional y Tecnologías**.
+
+Al cambiar de área se conserva la última empresa seleccionada. En las páginas
+informativas, el selector de empresa no aparece; **Dataset** utiliza la empresa
+seleccionada previamente en **Análisis financiero**.
 """)
-        st.subheader("Ejemplo de comprobación · Exxon Mobil (XOM)")
+        st.subheader("2. Explorar las cinco series financieras")
         st.markdown("""
-- Selecciona **XOM** y visualiza **Close**. Comprueba que el eje vertical
-  represente el precio y el eje horizontal las fechas bursátiles.
-- Activa las medias móviles MA20/MA50 y verifica que sean curvas históricas
-  descriptivas.
-- Cambia a **Volume**: las unidades deben ser acciones negociadas.
-- Abre **Cinco series** y verifica que estén presentes también JNJ, MSFT, JPM y WMT.
-- Consulta **Calidad y resultados**: una validación correcta significa que
-  los archivos satisfacen las reglas implementadas, no que sus cotizaciones
-  puedan predecirse con certeza.
+1. Selecciona **Análisis financiero** en **SECCIONES**.
+2. En **Serie financiera**, elige JNJ, MSFT, JPM, WMT o XOM.
+3. En **Serie individual**, consulta cierre inicial y final, resumen descriptivo,
+   la gráfica y las observaciones OHLCV. Cambia entre apertura, máximo, mínimo,
+   cierre y volumen; las medias móviles MA20/MA50 se muestran sobre **Close**.
+4. En **Cinco series**, revisa la explicación y la gráfica histórica de cada empresa.
+5. En **Comparación**, examina el índice base 100, cierres y variación acumulada
+   y la tabla de estadísticos descriptivos.
+6. En **Calidad y resultados**, revisa las tres condiciones temporales, los
+   controles OHLCV y la exportación del conjunto o el informe académico PDF.
 """)
-        st.subheader("Problemas habituales")
+        st.info(
+            "Los snapshots incorporados comprenden 10 años: "
+            "del 2016-10-31 al 2026-10-30, con 2.514 registros por empresa "
+            "y 12.570 observaciones en total."
+        )
+        st.subheader("3. Consultar información del proyecto")
         st.markdown("""
-- **Faltan datos oficiales:** verifica la carpeta `data/snapshots` y los manifiestos.
-- **Falla una validación:** revisa el detalle de la condición cuantitativa,
-  cronológica o de regularidad. No sustituyas registros sin documentar el motivo.
-- **Sesiones faltantes:** se detectan comparando con el calendario XNYS;
-  los fines de semana y cierres programados no son incidencias.
-- **No se actualiza Yahoo Finance:** comprueba conectividad; los snapshots
-  validados se conservan como respaldo y no son reemplazados automáticamente.
-- **No se genera el PDF:** revisa las dependencias y el mensaje de error;
-  el borrador requiere completar portada, interpretación y referencias finales.
-- **No aparece un cambio:** vuelve a cargar la pestaña del navegador.
+Selecciona **Información del proyecto** y elige la página:
+
+- **Acerca de:** objetivos, alcance y límites del Módulo I.
+- **Dataset:** fuente, cobertura, condiciones temporales, registros OHLCV
+  y consulta web opcional del activo previamente seleccionado.
+- **Fundamentos:** series temporales, OHLCV, medias móviles e interpretación.
+- **Trivia:** identidad TEMPUS y cuestionario interactivo.
+- **Ayuda:** esta guía.
+- **Institucional:** identificación académica.
+- **Tecnologías:** bibliotecas Python, funciones y pasos implementados.
 """)
+        st.subheader("4. Ejemplo de comprobación · ExxonMobil (XOM)")
+        st.markdown("""
+1. Selecciona **Análisis financiero** y, en **Serie financiera**, **XOM · ExxonMobil**.
+2. Abre **Serie individual** y visualiza **Close** (USD por acción).
+3. Activa MA20 y MA50 para observar promedios móviles históricos.
+4. Selecciona **Volume** y comprueba la unidad *acciones negociadas*.
+5. Abre **Calidad y resultados** y examina el diagnóstico temporal.
+6. Cambia a **Información del proyecto → Dataset**. Debe mostrarse XOM
+   como último activo seleccionado.
+""")
+        st.subheader("5. Informe, exportación y consultas")
+        st.markdown("""
+- En **Análisis financiero → Calidad y resultados**, pulsa
+  **Generar informe académico descriptivo (PDF)** y después
+  **Descargar informe PDF de Práctica 1**.
+- En la misma pestaña puedes descargar el ZIP de datos para
+  **TEMPUS PREDICTIO PROTO**.
+- En **Información del proyecto → Dataset**, puedes descargar los datos
+  validados o consultar cotizaciones web opcionalmente. Esa consulta
+  **no reemplaza** los snapshots oficiales incluidos.
+""")
+        st.subheader("6. Problemas habituales")
+        st.markdown("""
+- **No aparece Serie financiera:** vuelve a **SECCIONES → Análisis financiero**.
+- **No aparecen las siete páginas:** selecciona **Información del proyecto**.
+- **No cambia el activo en Dataset:** selecciona primero la empresa en
+  **Análisis financiero**; la selección se conserva al volver.
+- **Faltan datos oficiales:** comprueba `data/snapshots/` y sus manifiestos.
+- **Hay incidencias temporales:** examina los estados cuantitativo,
+  cronológico y de regularidad XNYS; los cierres programados no son faltantes.
+- **Falla la consulta web:** comprueba la conexión; los datos oficiales no se modifican.
+- **No se genera el PDF:** revisa el mensaje de error y las dependencias.
+  El archivo ya descargado no se actualiza automáticamente.
+- **No ves cambios después de actualizar:** reinicia Streamlit y recarga el navegador.
+""")
+        st.subheader("7. Verificación local")
         st.code(".\\.venv\\Scripts\\python.exe -m pytest tests -v", language="powershell")
         st.code(".\\.venv\\Scripts\\python.exe -m streamlit run app.py", language="powershell")
-        st.caption("URL local habitual: http://localhost:8501 (si el puerto está disponible).")
+        st.caption(
+            "Aplicación local: http://localhost:8501 (si el puerto está disponible). "
+            "La validación automática no sustituye la revisión visual de Streamlit."
+        )
 
     elif page == "Institucional":
         st.header("Institucional")
@@ -210,49 +256,34 @@ de inteligencia artificial se estudiarán en profundidad en
             "**10 años (2016-10-31 a 2026-10-30)**."
         )
         st.subheader("Bibliotecas y funciones utilizadas")
-        st.dataframe([
-            {"Biblioteca": "yfinance", "Función o recurso": "Ticker().history() / consulta de cotizaciones",
-             "Aplicación": "Adquisición web opcional de OHLCV; sin reemplazo automático de snapshots"},
-            {"Biblioteca": "pandas", "Función o recurso": "DatetimeIndex, sort_index(), to_numeric()",
-             "Aplicación": "Organización cronológica y comprobación numérica"},
-            {"Biblioteca": "pandas", "Función o recurso": "pct_change(), rolling().mean()",
-             "Aplicación": "Rendimientos por sesión y medias móviles MA20 / MA50"},
-            {"Biblioteca": "pandas", "Función o recurso": "mean(), median(), std(), min(), max(), cummax()",
-             "Aplicación": "Cierre inicial/final, dispersión, extremos y caída histórica"},
-            {"Biblioteca": "NumPy", "Función o recurso": "isfinite(), sqrt()",
-             "Aplicación": "Valores válidos y volatilidad anualizada"},
-            {"Biblioteca": "exchange_calendars", "Función o recurso": "get_calendar('XNYS'), sessions_in_range()",
-             "Aplicación": "Identificar sesiones bursátiles esperadas y faltantes"},
-            {"Biblioteca": "Plotly", "Función o recurso": "graph_objects.Scatter()",
-             "Aplicación": "Gráficas cronológicas interactivas"},
-            {"Biblioteca": "Matplotlib", "Función o recurso": "plot(), savefig()",
-             "Aplicación": "Gráficas de las cinco empresas en el PDF"},
-            {"Biblioteca": "Streamlit", "Función o recurso": "tabs(), dataframes, métricas y download_button()",
-             "Aplicación": "Interfaz, indicadores y descarga"},
-            {"Biblioteca": "ReportLab", "Función o recurso": "SimpleDocTemplate, Paragraph, Table, Image",
-             "Aplicación": "Informe académico reproducible"},
-            {"Biblioteca": "pytest", "Función o recurso": "Pruebas de validación y exportación",
-             "Aplicación": "Verificación de las funciones del proyecto"},
-        ], hide_index=True, use_container_width=True)
+        st.markdown("""
+| Biblioteca | Función o recurso | Aplicación |
+|---|---|---|
+| `yfinance` | `Ticker().history()` / consulta de cotizaciones | Adquisición web opcional de OHLCV; sin reemplazo automático de snapshots |
+| `pandas` | `DatetimeIndex`, `sort_index()`, `to_numeric()` | Organización cronológica y comprobación numérica |
+| `pandas` | `pct_change()`, `rolling().mean()` | Rendimientos por sesión y medias móviles MA20 / MA50 |
+| `pandas` | `mean()`, `median()`, `std()`, `min()`, `max()`, `cummax()` | Cierre inicial/final, dispersión, extremos y caída histórica |
+| `NumPy` | `isfinite()`, `sqrt()` | Valores válidos y volatilidad anualizada |
+| `exchange_calendars` | `get_calendar('XNYS')`, `sessions_in_range()` | Identificar sesiones bursátiles esperadas y faltantes |
+| `Plotly` | `graph_objects.Scatter()` | Gráficas cronológicas interactivas |
+| `Matplotlib` | `plot()`, `savefig()` | Gráficas de las cinco empresas en el PDF |
+| `Streamlit` | `tabs()`, `dataframe()`, `metric()`, `download_button()` | Interfaz, indicadores y descarga |
+| `ReportLab` | `SimpleDocTemplate`, `Paragraph`, `Table`, `Image` | Informe académico reproducible |
+| `pytest` | Pruebas de validación y exportación | Verificación de las funciones del proyecto |
+""")
         st.subheader("Cómo se cumple cada etapa")
-        st.dataframe([
-            {"Etapa": "1. Adquisición", "Implementación": "tempus/io.py y snapshots Parquet con manifiestos",
-             "Evidencia": "Cinco series: JNJ, MSFT, JPM, WMT y XOM"},
-            {"Etapa": "2. Validación OHLCV", "Implementación": "tempus/core.py: normalize_prices()",
-             "Evidencia": "Tipos, duplicados, fechas, rango y coherencia de precios"},
-            {"Etapa": "3. Condiciones temporales", "Implementación": "tempus/temporal.py: diagnose_time_series()",
-             "Evidencia": "Cuantitativa, cronológica y regularidad de sesiones XNYS"},
-            {"Etapa": "4. Estadística descriptiva", "Implementación": "tempus/descriptive.py y tempus/core.py",
-             "Evidencia": "Cierres inicial/final, extremos, promedios, variación y volatilidad"},
-            {"Etapa": "5. Gráficas", "Implementación": "app.py / Plotly y academic_report.py / Matplotlib",
-             "Evidencia": "Una gráfica de cierre para cada empresa y comparación base 100"},
-            {"Etapa": "6. Verificación", "Implementación": "tests/ con pytest",
-             "Evidencia": "Resultados comprobables al ejecutar la suite en el equipo"},
-            {"Etapa": "7. Reporte", "Implementación": "tempus/academic_report.py",
-             "Evidencia": "PDF con cinco fichas individuales, gráficas y tabla comparativa"},
-            {"Etapa": "8. Exportación", "Implementación": "tempus/dataset.py",
-             "Evidencia": "CSV, manifiesto SHA-256 e indicadores para Predictio"},
-        ], hide_index=True, use_container_width=True)
+        st.markdown("""
+| Etapa | Implementación | Evidencia |
+|---|---|---|
+| 1. Adquisición | `tempus/io.py` y snapshots Parquet con manifiestos | Cinco series: JNJ, MSFT, JPM, WMT y XOM |
+| 2. Validación OHLCV | `tempus/core.py`: `normalize_prices()` | Tipos, duplicados, fechas, rango y coherencia de precios |
+| 3. Condiciones temporales | `tempus/temporal.py`: `diagnose_time_series()` | Cuantitativa, cronológica y regularidad de sesiones XNYS |
+| 4. Estadística descriptiva | `tempus/descriptive.py` y `tempus/core.py` | Cierres inicial/final, extremos, promedios, variación y volatilidad |
+| 5. Gráficas | `app.py` / Plotly y `tempus/academic_report.py` / Matplotlib | Una gráfica de cierre para cada empresa y comparación base 100 |
+| 6. Verificación | `tests/` con `pytest` | Resultados comprobables al ejecutar la suite en el equipo |
+| 7. Reporte | `tempus/academic_report.py` | PDF con cinco fichas individuales, gráficas y tabla comparativa |
+| 8. Exportación | `tempus/dataset.py` | CSV, manifiesto SHA-256 e indicadores para Predictio |
+""")
         st.subheader("Organización del proyecto")
         st.markdown("""
 - **`app.py`:** navegación y gráficas interactivas en Streamlit.

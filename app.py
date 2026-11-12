@@ -22,8 +22,11 @@ from tempus.descriptive import describe_closing_prices, closing_interpretation
 logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s %(message)s")
 LOG = logging.getLogger(__name__)
 ROOT = Path(__file__).resolve().parent
-SECTIONS = ("Análisis financiero", "Acerca de", "Dataset", "Fundamentos",
-            "Trivia", "Ayuda", "Institucional", "Tecnologías")
+AREAS = ("Análisis financiero", "Información del proyecto")
+INFORMATION_PAGES = (
+    "Acerca de", "Dataset", "Fundamentos", "Trivia",
+    "Ayuda", "Institucional", "Tecnologías",
+)
 QUIZ = (
     ("¿Qué tipo de variable se analiza en estas series bursátiles?",
      ("Cuantitativa", "Exclusivamente cualitativa", "Sin unidad de medida"), 0,
@@ -76,19 +79,58 @@ def line_chart(frame: pd.DataFrame, ticker: str, column: str,
 
 
 def navigation() -> tuple[str, str]:
-    """Dibuja las siete secciones oficiales de navegación."""
+    """Separa análisis bursátil de las siete páginas informativas.
+
+    Conserva el ticker seleccionado al cambiar de área, sin crear
+    otros proyectos ni alterar el almacenamiento de los históricos.
+    """
     with st.sidebar:
         logo = ROOT / "assets" / "tempus-logo.png"
         if logo.exists():
             st.image(str(logo), width=155)
         st.markdown("### TEMPUS EXPLORATIO PROTO")
         st.caption("TEMPUS DECISIO PROTO · Módulo I")
-        st.write("Exploración y análisis de acciones bursátiles como series temporales cuantitativas.")
+        st.write(
+            "Exploración y análisis de acciones bursátiles como "
+            "series temporales cuantitativas."
+        )
         st.divider()
-        st.caption("INFORMACIÓN DEL PROYECTO")
-        page = st.radio("Navegación", SECTIONS, label_visibility="collapsed")
+        st.caption("SECCIONES")
+        area = st.radio(
+            "Área de navegación",
+            AREAS,
+            label_visibility="collapsed",
+            key="tempus_navigation_area",
+        )
+
+        saved_ticker = st.session_state.get("tempus_saved_ticker", SYMBOLS[0])
+        if saved_ticker not in SYMBOLS:
+            saved_ticker = SYMBOLS[0]
+
+        if area == "Análisis financiero":
+            st.divider()
+            st.caption("ANÁLISIS FINANCIERO")
+            ticker = st.selectbox(
+                "Serie financiera",
+                SYMBOLS,
+                index=SYMBOLS.index(saved_ticker),
+                format_func=lambda x: f"{x} · {ASSETS[x].company}",
+                key="tempus_financial_ticker",
+            )
+            st.session_state["tempus_saved_ticker"] = ticker
+            page = "Análisis financiero"
+        else:
+            st.divider()
+            st.caption("INFORMACIÓN DEL PROYECTO")
+            page = st.radio(
+                "Página informativa",
+                INFORMATION_PAGES,
+                label_visibility="collapsed",
+                key="tempus_information_page",
+            )
+            ticker = saved_ticker
+
         st.divider()
-        ticker = st.selectbox("Serie financiera", SYMBOLS, format_func=lambda x: f"{x} · {ASSETS[x].company}")
         st.caption("Práctica 1 · Solo análisis histórico")
     return page, ticker
 

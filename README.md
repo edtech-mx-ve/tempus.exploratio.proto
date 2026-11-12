@@ -1,246 +1,213 @@
 <div align="center">
 
-<img src="assets/tempus-logo.png" width="150" alt="Logotipo de TEMPUS EXPLORATIO PROTO">
+<img src="assets/tempus-logo.png" width="150" alt="Logotipo TEMPUS DECISIO PROTO">
 
 # TEMPUS EXPLORATIO PROTO
 
-**TEMPUS DECISIO PROTO · Módulo I · Práctica 1**
+### TEMPUS DECISIO PROTO · Módulo I
 
 **Exploración y análisis de acciones bursátiles como series temporales cuantitativas.**
 
-Python 3.12 · Streamlit · pandas · NumPy · Plotly · Parquet · PDF
+**Python 3.12 · Streamlit · 5 empresas · 10 años de históricos · Práctica 1**
 
-[Repositorio de esta aplicación](https://github.com/edtech-mx-ve/tempus.exploratio.proto)
+[Aplicación Streamlit](https://tempus-exploratio-proto.streamlit.app/) ·
+[Repositorio GitHub](https://github.com/edtech-mx-ve/tempus.exploratio.proto)
 
 </div>
 
-## 1. Descripción y alcance
+## 1. Presentación y alcance
 
-**TEMPUS EXPLORATIO PROTO** es una aplicación académica para adquirir, validar, explorar, representar gráficamente y documentar **cinco series temporales financieras**. Permite examinar la evolución histórica de los precios de las acciones, contrastar sus comportamientos, verificar las condiciones de una serie temporal y obtener evidencias descriptivas.
+**TEMPUS EXPLORATIO PROTO** es una aplicación académica para adquirir o consultar, validar, explorar, representar gráficamente y documentar cinco series temporales financieras. Pertenece al proyecto **TEMPUS DECISIO PROTO** y corresponde a la **Práctica 1 de la Unidad 4** de *Tópicos de IA para la Transformación Digital*.
 
-La aplicación corresponde a la **Práctica 1** de la Unidad 4. **No entrena modelos de inteligencia artificial ni genera pronósticos bursátiles.** El modelado y la evaluación predictiva pertenecen al módulo posterior, **TEMPUS PREDICTIO PROTO**, que podrá utilizar los datos validados exportados desde esta aplicación.
+La aplicación realiza **análisis histórico descriptivo**. No entrena modelos de inteligencia artificial, no proyecta cotizaciones futuras y no ofrece asesoramiento financiero. El modelado predictivo corresponde al módulo posterior **TEMPUS PREDICTIO PROTO**.
 
-El análisis se limita a los datos observados y no constituye una recomendación de inversión.
+**Institución:** Instituto Internacional de Aguascalientes.  
+**Programa:** Maestría en Inteligencia Artificial para la Transformación Digital.  
+**Alumno:** Antonio Nicolás Toro González.  
+**Tutor:** Dr. Francisco Javier Luna Rosas.
 
-## 2. Series y cobertura histórica
+## 2. Datos oficiales de la aplicación
 
-Los cinco snapshots incluidos en esta edición tienen la misma cobertura de **diez años, del 31 de octubre de 2016 al 30 de octubre de 2026**.
+Los snapshots históricos incluidos en la distribución actual declaran:
 
-| Símbolo | Empresa | Sector | Observaciones | Período |
-|---|---|---|---:|---|
-| JNJ | Johnson & Johnson | Salud | 2.514 | 2016-10-31 a 2026-10-30 |
-| MSFT | Microsoft | Tecnología | 2.514 | 2016-10-31 a 2026-10-30 |
-| JPM | JPMorgan Chase | Financiero | 2.514 | 2016-10-31 a 2026-10-30 |
-| WMT | Walmart | Comercio minorista | 2.514 | 2016-10-31 a 2026-10-30 |
-| XOM | ExxonMobil | Energía | 2.514 | 2016-10-31 a 2026-10-30 |
-| **Total** | **5 empresas** | | **12.570** | |
+| Empresa | Símbolo | Sector | Observaciones |
+|---|---|---|---:|
+| Johnson & Johnson | JNJ | Salud | 2.514 |
+| Microsoft | MSFT | Tecnología | 2.514 |
+| JPMorgan Chase | JPM | Financiero | 2.514 |
+| Walmart | WMT | Comercio minorista | 2.514 |
+| ExxonMobil | XOM | Energía | 2.514 |
+| **Total** | | | **12.570** |
 
-Las cifras anteriores se obtuvieron de los **metadatos JSON incluidos** en la edición v0.3.4; los archivos Parquet contienen los históricos asociados y se verifican mediante hashes SHA-256 al cargarlos.
+- **Período documentado:** 31 de octubre de 2016 al 30 de octubre de 2026 (**10 años**).
+- **Frecuencia:** sesiones bursátiles diarias, no todos los días naturales.
+- **Variables OHLCV:** `Open`, `High`, `Low`, `Close` (USD por acción, según el ajuste de la fuente) y `Volume` (acciones negociadas).
+- **Origen declarado:** cotizaciones históricas de Yahoo Finance, con datos locales Parquet y manifiestos JSON que registran cobertura e integridad.
+- **Calendario de control:** XNYS mediante `exchange_calendars`, para detectar posibles sesiones faltantes sin confundir fines de semana o días de cierre con errores.
+- **Actualización web:** consulta opcional de un activo; **no reemplaza los snapshots oficiales**.
 
-La frecuencia corresponde a **sesiones bursátiles diarias**, no a días naturales: fines de semana y cierres oficiales del mercado no implican automáticamente observaciones faltantes. El calendario de referencia es **XNYS (New York Stock Exchange)**.
+El hash SHA-256 verifica que un archivo coincide con su referencia registrada; por sí solo no certifica autenticidad ni derechos de redistribución.
 
-Los snapshots son datos históricos versionados. La aplicación **no representa un flujo de precios en tiempo real** y la consulta web opcional no sustituye automáticamente los históricos oficiales.
+## 3. Navegación actual: dos áreas en la barra lateral
 
-## 3. Variables y condiciones de una serie temporal
+La interfaz organiza sus contenidos en **dos áreas**, seleccionables bajo **SECCIONES**:
 
-Cada empresa dispone de las variables OHLCV:
+### 3.1. Análisis financiero
 
-| Campo | Interpretación | Unidad |
-|---|---|---|
-| `Open` | Precio de apertura | USD por acción |
-| `High` | Precio máximo | USD por acción |
-| `Low` | Precio mínimo | USD por acción |
-| `Close` | Precio de cierre | USD por acción |
-| `Volume` | Volumen negociado | Acciones |
+Al seleccionar **Análisis financiero**, aparece el control **Serie financiera** para elegir JNJ, MSFT, JPM, WMT o XOM. El panel principal presenta cuatro pestañas:
 
-**Nota de interpretación:** la descarga web se realiza con `auto_adjust=True` en `yfinance`. Los ajustes de precios dependen de la fuente y de los metadatos de cada snapshot; no deben confundirse indiscriminadamente con precios nominales sin ajustar.
-
-Se comprueban tres condiciones fundamentales:
-
-1. **Cuantitativa:** valores numéricos válidos, rangos coherentes y consistencia OHLCV.
-2. **Cronológica:** fechas válidas, orden temporal y ausencia de duplicados.
-3. **Regularidad:** concordancia entre las fechas observadas y las sesiones bursátiles esperadas según XNYS.
-
-Las incidencias se presentan para su revisión; la aplicación **no inventa, interpola ni elimina automáticamente registros** para hacerlos cumplir estas condiciones. Desde un punto de vista general, también existen series temporales con muestreo irregular; la regularidad de sesiones es el criterio operativo adoptado en este estudio.
-
-## 4. Funcionalidades de la aplicación
-
-La navegación contiene **ocho secciones**:
-
-| Sección | Funcionalidad real |
+| Pestaña | Función |
 |---|---|
-| **Análisis financiero** | Serie individual, cinco gráficas de cierre, comparación base 100, estadísticos, calidad y resultados |
-| **Acerca de** | Objetivo, metodología, alcance y relación con TEMPUS DECISIO PROTO |
-| **Dataset** | Cobertura, OHLCV, validaciones, registros, consulta web opcional y exportación |
-| **Fundamentos** | Series temporales, condiciones, variables, indicadores e interpretación |
-| **Trivia** | Identidad de TEMPUS, contenido educativo y cuestionario interactivo con puntuación |
-| **Ayuda** | Recorrido de uso y solución de incidencias |
-| **Institucional** | Identificación académica del proyecto |
-| **Tecnologías** | Bibliotecas Python, funciones utilizadas, arquitectura y etapas implementadas |
+| **Serie individual** | Resumen del cierre, gráfica histórica de OHLCV, medias móviles MA20/MA50 cuando se consulta `Close` y últimos registros |
+| **Cinco series** | Explicación, gráfica de cierre y estado OHLCV de las cinco empresas |
+| **Comparación** | Índice base 100, cierres iniciales/finales, variación acumulada y estadísticos descriptivos |
+| **Calidad y resultados** | Diagnóstico temporal y OHLCV, descarga del dataset y generación/descarga del informe académico PDF |
 
-Dentro de **Análisis financiero** están disponibles las pestañas **Serie individual**, **Cinco series**, **Comparación** y **Calidad y resultados**. Las gráficas se presentan en el tiempo y no son extrapolaciones.
+### 3.2. Información del proyecto
 
-### Indicadores descriptivos
+Al seleccionar **Información del proyecto**, se muestran **siete páginas**:
 
-Se calculan, según el componente, cierres inicial y final, variación absoluta y porcentual, extremos históricos y sus fechas, media, mediana, desviación estándar, rendimiento por sesión, medias móviles **MA20/MA50**, volatilidad histórica anualizada (factor convencional de 252 sesiones), volumen promedio, caída máxima (*drawdown*) y comparación normalizada **base 100**.
+1. **Acerca de:** objetivo, alcance y metodología del Módulo I.
+2. **Dataset:** fuente, diez años de cobertura, OHLCV, condiciones temporales, consulta y exportación.
+3. **Fundamentos:** definiciones e interpretación de series e indicadores.
+4. **Trivia:** identidad de TEMPUS y preguntas con evaluación y retroalimentación.
+5. **Ayuda:** guía de navegación y resolución de problemas.
+6. **Institucional:** información académica.
+7. **Tecnologías:** bibliotecas, funciones Python, arquitectura y etapas del proceso.
 
-Estas medidas describen el período analizado y **no garantizan resultados futuros**. Comparar la variación acumulada de dos acciones no equivale a una comparación ajustada por riesgo.
+**Persistencia de selección:** la última empresa elegida en **Análisis financiero → Serie financiera** se conserva al cambiar de área. En **Información del proyecto** no aparece dicho selector; la página **Dataset** utiliza la última empresa seleccionada.
 
-## 5. Cómo se implementó el proceso
+## 4. Metodología implementada
 
-| Etapa | Implementación | Verificación o evidencia |
-|---|---|---|
-| 1. Adquisición y carga | `tempus/io.py`, `yfinance`, snapshots Parquet/JSON | Cinco históricos disponibles; consulta web opcional |
-| 2. Validación OHLCV | `tempus/core.py`: `normalize_prices()` | Tipos, faltantes, duplicados y coherencia de precios |
-| 3. Verificación temporal | `tempus/temporal.py`: `diagnose_time_series()` y calendario XNYS | Condiciones cuantitativa, cronológica y regularidad |
-| 4. Descripción estadística | `tempus/core.py` y `tempus/descriptive.py` | Resúmenes y análisis individual de cada empresa |
-| 5. Visualización | `app.py` con Plotly; `tempus/academic_report.py` con Matplotlib | Cinco gráficas, indicadores y comparación relativa |
-| 6. Prueba | Archivos de `tests/` con `pytest` en el entorno de desarrollo | Validaciones y contratos comprobables |
-| 7. Informe académico | `tempus/academic_report.py` con ReportLab | PDF con cifras, interpretación y gráficas por empresa |
-| 8. Exportación | `tempus/dataset.py` | ZIP con CSV, manifiesto, indicadores y diagnóstico temporal |
+La Práctica 1 sigue el procedimiento:
 
-El informe PDF se **genera desde la aplicación** en **Análisis financiero → Calidad y resultados → Generar informe académico descriptivo (PDF)**. Incluye cierre inicial/final y un análisis por empresa; requiere revisión académica antes de su entrega.
+**Problema → fuentes → datos → validación → estadística descriptiva → representación gráfica → comprobación → informe y exportación.**
 
-La exportación destinada a Predictio mantiene el contrato `tempus-financial-ohlcv/1.0` y añade un archivo de diagnóstico temporal. No equivale a ejecutar modelos predictivos.
-
-## 6. Tecnologías utilizadas
-
-| Biblioteca / herramienta | Uso en esta edición |
+| Paso | Implementación |
 |---|---|
-| **Python 3.12** | Lenguaje de implementación recomendado |
-| **Streamlit** | Interfaz interactiva, navegación, métricas y descargas |
-| **pandas** | Fechas, organización de tablas, `pct_change()`, `rolling()`, `mean()`, `median()`, `std()` |
-| **NumPy** | Comprobación de valores finitos y cálculos numéricos |
-| **Plotly** | Gráficas históricas interactivas |
-| **Matplotlib** | Gráficas incorporadas en el informe PDF |
-| **yfinance** | Consulta opcional de cotizaciones de Yahoo Finance |
-| **PyArrow / Parquet** | Lectura de archivos históricos de datos |
-| **exchange_calendars** | Calendario XNYS y sesiones de negociación |
-| **ReportLab** | Generación del PDF académico |
-| **pytest** | Pruebas automatizadas durante el desarrollo |
+| Adquisición y snapshots | `tempus/io.py`; consulta opcional mediante `yfinance` y almacenamiento versionado |
+| Integridad financiera | `tempus/core.py`; fechas, datos numéricos, faltantes, rangos y coherencia OHLCV |
+| Condiciones temporales | `tempus/temporal.py`; cuantitativa, cronológica y regularidad según sesiones XNYS |
+| Indicadores | `tempus/core.py` y `tempus/descriptive.py`; rendimientos, promedios móviles, cierres, volatilidad, máximos/mínimos y variaciones |
+| Gráficas | `app.py` con Plotly; figuras del informe con Matplotlib |
+| Interfaz | `app.py`, `tempus/info_pages.py` y Streamlit |
+| Informe | `tempus/academic_report.py` con ReportLab |
+| Exportación | `tempus/dataset.py`; CSV y manifiesto de trazabilidad |
+| Pruebas | `tests/` con `pytest`, si la suite de desarrollo está disponible localmente |
 
-No se utilizan ARIMA, SES, evaluación *walk-forward* ni pronósticos futuros en esta edición de Exploratio.
+Se trabaja con el histórico observado, sin ajustes predictivos ni eliminación automática de valores extremos.
 
-## 7. Requisitos y ejecución local
+## 5. Estructura del proyecto
 
-- Python **3.12** recomendado.
-- Windows PowerShell para los comandos siguientes.
-- Los datos oficiales deben conservarse dentro de `data/snapshots/`, con su archivo `.parquet` y su manifiesto `.json` correspondiente.
-- La consulta web opcional requiere internet; la exploración de snapshots incluidos no depende de una descarga nueva.
-
-Desde la **carpeta raíz del proyecto**, donde está `app.py`:
-
-```powershell
-# Crear entorno virtual solo si todavía no existe
-py -3.12 -m venv .venv
-
-# Instalar las bibliotecas necesarias
-.\.venv\Scripts\python.exe -m pip install -r requirements.txt
-
-# Comprobar dependencias
-.\.venv\Scripts\python.exe -m pip check
-
-# Abrir la aplicación
-.\.venv\Scripts\python.exe -m streamlit run app.py
-```
-
-URL local habitual: **http://localhost:8501**.
-
-Para ejecutar las pruebas en un entorno de desarrollo:
-
-```powershell
-.\.venv\Scripts\python.exe -m pip install -r requirements-dev.txt
-.\.venv\Scripts\python.exe -m pytest tests -v
-```
-
-`requirements-dev.txt` y `tests/` son útiles para validación local, pero **no son necesarios en el repositorio mínimo de despliegue**, siempre que `requirements.txt` incluya todas las dependencias de ejecución.
-
-**Importante:** no utilizar los comandos `refresh_10y.py`, `run_10y_pipeline.py` o `rebuild_comparative_report.py` de ediciones anteriores: **no están incluidos en esta versión**.
-
-## 8. Organización del proyecto
-
-Estructura de los archivos necesarios para ejecutar la aplicación:
+Solo los archivos esenciales se requieren para ejecutar la app en Streamlit:
 
 ```text
 TEMPUS EXPLORATIO PROTO/
+├── app.py
+├── requirements.txt
+├── README.md
 ├── .streamlit/
 │   └── config.toml
 ├── assets/
 │   └── tempus-logo.png
-├── data/
-│   └── snapshots/
-│       ├── JNJ/       # 1 archivo .parquet y 1 .json
-│       ├── MSFT/      # 1 archivo .parquet y 1 .json
-│       ├── JPM/       # 1 archivo .parquet y 1 .json
-│       ├── WMT/       # 1 archivo .parquet y 1 .json
-│       └── XOM/       # 1 archivo .parquet y 1 .json
 ├── tempus/
 │   ├── __init__.py
 │   ├── academic_report.py
 │   ├── assets.py
 │   ├── core.py
 │   ├── dataset.py
-│   ├── demo.py
 │   ├── descriptive.py
 │   ├── info_pages.py
 │   ├── io.py
 │   └── temporal.py
-├── app.py
-├── requirements.txt
-└── README.md
+└── data/
+    └── snapshots/
+        ├── JNJ/    # Parquet + JSON
+        ├── MSFT/   # Parquet + JSON
+        ├── JPM/    # Parquet + JSON
+        ├── WMT/    # Parquet + JSON
+        └── XOM/    # Parquet + JSON
 ```
 
-La carpeta local de desarrollo también puede contener `tests/`, `requirements-dev.txt`, registros de cambios y `.venv/`; no forman parte de la estructura mínima indicada.
+El entorno virtual `.venv/`, los respaldos, los informes generados y los archivos temporales **no forman parte del despliegue**. La suite `tests/` y `requirements-dev.txt` pueden permanecer solo en la instalación de desarrollo; no son necesarios para ejecutar la app publicada.
 
-## 9. Publicación en GitHub y Streamlit Community Cloud
+## 6. Instalación y prueba en la carpeta local existente
 
-**Repositorio de esta edición:**
-[edtech-mx-ve/tempus.exploratio.proto](https://github.com/edtech-mx-ve/tempus.exploratio.proto).
+No hace falta crear otra carpeta del proyecto. Desde la **carpeta local actual**:
 
-La publicación se realiza desde la **carpeta local existente**; no es necesario duplicar el proyecto ni crear otra carpeta.
+```powershell
+# Si el entorno .venv ya existe, no volver a crearlo.
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+.\.venv\Scripts\python.exe -m pip check
 
-Antes de hacer `git push`, revisar `git status` y `git diff --cached --name-only` para comprobar que se subirán únicamente `app.py`, `requirements.txt`, `.streamlit/config.toml`, `assets/tempus-logo.png`, los archivos Python necesarios de `tempus/`, los cinco pares Parquet/JSON y este README. No incluir `.venv`, secretos, cachés, reportes generados o respaldos.
+# Si tests/ y pytest están instalados:
+.\.venv\Scripts\python.exe -m pytest tests -v
 
-**Configuración prevista para Streamlit Community Cloud:**
+# Ejecutar aplicación local:
+.\.venv\Scripts\python.exe -m streamlit run app.py
+```
 
-| Parámetro | Valor |
-|---|---|
-| Repositorio | `edtech-mx-ve/tempus.exploratio.proto` |
-| Rama | `main` |
-| Archivo principal | `app.py` |
-| Python | `3.12` |
+**URL local habitual:** http://localhost:8501.
 
-**La URL pública de Streamlit se incorporará al README una vez confirmado el despliegue.** No se utiliza la URL de la edición anterior como si correspondiera a este repositorio.
+Si aún no existe el entorno virtual, se puede crear en esa misma carpeta con `py -3.12 -m venv .venv`. Los cambios de código deben validarse **primero en local**, antes de enviarlos a GitHub.
 
-Antes de hacer públicos los históricos, revisar si los términos del proveedor permiten su redistribución. La presencia de snapshots en el proyecto local no demuestra, por sí sola, autorización para publicarlos.
+### Comprobación manual mínima
 
-## 10. Reproducibilidad, limitaciones y uso académico
+1. Comprobar ambas áreas de la barra lateral.
+2. Seleccionar MSFT en **Análisis financiero → Serie financiera**; cambiar a **Información del proyecto → Dataset** y comprobar que sigue siendo MSFT.
+3. Visualizar las cuatro pestañas de análisis y comprobar las gráficas de las cinco empresas.
+4. Consultar regularidad y calidad OHLCV.
+5. Completar Trivia y comprobar su retroalimentación.
+6. Generar el PDF y verificar sus resultados, unidades y referencias.
+7. Descargar el ZIP de datos y comprobar los archivos exportados.
 
-- Los resultados se calculan sobre los cinco históricos de la edición indicada, con fecha final **2026-10-30**.
-- Los precios pueden incorporar ajustes del proveedor; deben interpretarse junto con los metadatos.
-- La verificación del calendario cubre las sesiones comprendidas entre la primera y la última observación.
-- No se completan huecos artificialmente ni se sustituyen snapshots sin decisión explícita.
-- Cinco series bursátiles históricas no implican por sí solas infraestructura Big Data distribuida.
-- Los cálculos automáticos no sustituyen la revisión visual de los controles, gráficas y PDF.
-- El informe académico generado debe revisarse antes de entregarse.
-- No se producen pronósticos ni recomendaciones financieras.
+Las pruebas de Python no equivalen a una auditoría visual automática de Streamlit.
 
-## 11. Identificación institucional
+## 7. Informe académico y exportación
 
-**Institución:** Instituto Internacional de Aguascalientes  
-**Programa:** Maestría en Inteligencia Artificial para la Transformación Digital  
-**Asignatura:** Tópicos de IA para la Transformación Digital · Unidad 4  
-**Tutor:** Dr. Francisco Javier Luna Rosas  
-**Alumno:** Antonio Nicolás Toro González  
+En **Análisis financiero → Calidad y resultados**:
 
-**Proyecto:** TEMPUS DECISIO PROTO  
-**Aplicación:** TEMPUS EXPLORATIO PROTO · Módulo I · Práctica 1
+- **Generar informe académico descriptivo (PDF):** crea un nuevo informe de la Práctica 1 a partir de los históricos validados. Incluye comparación, valores de cierre, análisis individual, figuras, metodología, comprobaciones y referencias.
+- **Descargar informe PDF de Práctica 1:** permite guardar el documento generado.
+- **Descargar insumos para TEMPUS PREDICTIO PROTO (ZIP):** conserva el contrato del dataset.
 
----
+El ZIP de datos incluye:
 
-**Fuentes y documentación técnica:**
-[Yahoo Finance](https://finance.yahoo.com/) ·
-[yfinance](https://github.com/ranaroussi/yfinance) ·
-[Streamlit](https://docs.streamlit.io/) ·
-[pandas](https://pandas.pydata.org/docs/) ·
-[exchange_calendars](https://github.com/gerrymanoim/exchange_calendars)
+```text
+tempus_exploratio_proto_series.csv
+tempus_exploratio_proto_manifest.json
+tempus_exploratio_proto_indicadores.csv
+tempus_exploratio_proto_diagnostico_temporal.csv
+```
+
+El manifiesto documenta la procedencia declarada, cobertura, frecuencia y SHA-256 del CSV. El archivo de diagnóstico temporal es complementario y no modifica las columnas del CSV OHLCV.
+
+**Importante:** un PDF descargado con anterioridad no se actualiza automáticamente; debe generarse de nuevo desde la aplicación después de un cambio de código o datos.
+
+## 8. Publicación y actualizaciones
+
+**Repositorio:** https://github.com/edtech-mx-ve/tempus.exploratio.proto  
+**Aplicación:** https://tempus-exploratio-proto.streamlit.app/
+
+El repositorio utiliza **`app.py`** como archivo principal, la rama **`main`** y las dependencias de `requirements.txt`. Python **3.12** es la versión local recomendada.
+
+Para registrar una actualización aprobada, ejecutar desde la **misma carpeta local**:
+
+```powershell
+git status
+git add app.py tempus/info_pages.py README.md
+git diff --cached --name-only
+git commit -m "Actualizar navegacion y documentacion de Exploratio"
+git push origin main
+```
+
+Ajustar `git add` a los archivos realmente modificados. No ejecutar `git add .` si el objetivo es publicar solo componentes específicos. Antes de cada publicación, revisar licencias y permisos de redistribución de los snapshots.
+
+## 9. Alcance y limitaciones
+
+- Los datos históricos terminan el **2026-10-30**; la app no asegura cotizaciones en tiempo real.
+- Las series se describen y comparan; no se emiten pronósticos ni recomendaciones de inversión.
+- Las tasas de variación históricas no indican rendimiento futuro ni equivalencia de riesgo entre empresas.
+- Los precios pueden estar ajustados por eventos corporativos según el proveedor; consultar metadatos.
+- Las cinco series locales no demuestran, por sí solas, procesamiento Big Data distribuido.
+- La verificación automatizada y el despliegue público deben complementarse con revisión funcional y académica.
